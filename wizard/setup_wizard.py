@@ -456,6 +456,10 @@ class SetupWizardGUI:
         buttons.grid(row=row, column=0, columnspan=3, sticky="e", pady=6)
         ttk.Button(buttons, text="Iptal", command=self.root.destroy).pack(side="right", padx=4)
         ttk.Button(buttons, text="Kaydet", command=self._save).pack(side="right", padx=4)
+        row += 1
+
+        ttk.Label(main, text="© 2026 İlker Can Karagülle · Loreweld AI (loreweld.ai)",
+                  foreground="#666666").grid(row=row, column=0, columnspan=3, sticky="w", pady=(2, 0))
 
         main.columnconfigure(1, weight=1)
 

@@ -109,6 +109,7 @@ ONEMLI KURAL:
   - Tum ciktilar PROJE klasorune yazilir; devkit ana klasoru
     yalnizca aletleri ve kayit defterini tutar.
 ============================================================
+© 2026 İlker Can Karagülle · Loreweld AI (loreweld.ai)
 """
 
 

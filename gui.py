@@ -74,7 +74,10 @@ class DevkitGUI:
         self.status.pack(fill="x")
 
         out = ttk.LabelFrame(self.root, text="Cikti", padding=4)
-        out.pack(fill="both", expand=True, padx=12, pady=(2, 10))
+        out.pack(fill="both", expand=True, padx=12, pady=(2, 4))
+
+        ttk.Label(self.root, text="© 2026 İlker Can Karagülle · Loreweld AI (loreweld.ai)",
+                  foreground="#666666", padding=(12, 0, 12, 6)).pack(fill="x")
         
         out_top = ttk.Frame(out)
         out_top.pack(fill="x", pady=(0, 4))
