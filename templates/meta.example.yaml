@@ -1,0 +1,128 @@
+# meta.yaml — Runtime Architecture Knowledge (AI tarafindan doldurulur)
+# Konum: <proje>/.devkit/meta.yaml
+# İlk taramada AI bu dosyayi sifirdan olusturur; sonraki sync'lerde guncel tutar.
+# Kurallar (rules.md §7 meta-yonetimi):
+#   - Sadece sinif/fonksiyon eklendiginde GUNCELLEME GEREKMEZ (scan.json yeterli).
+#   - Akis mantigi / event / desen / boot sirasi degisirse MUTLAKA GUNCELLE.
+#   - Bu dosya KB/ARCHITECTURE.md + KB/flows/*.md uretiminin kaynagidir.
+# NOT: Asagidaki tum degerler YER TUTUCUDUR. AI projeyi okuyarak gercek degerlerle degistirir.
+#       Hicbir proje-ozel isim (EVA, REMEMBER vb.) bu sablonda kalmamalidir.
+
+metadata:
+  version: 1
+  authored: "2026-09-13"
+  note: "Runtime architecture knowledge. Update when flows, events, patterns or boot order change."
+
+system:
+  name: "PROJE_ADI"
+  version: "0.1.0"
+  description: "Tek cumlede proje ne yapar? Or: REST API + worker + web UI"
+
+architecture:
+  layers:
+    - name: "UI / Entry"
+      responsibility: "Kullanicinin gordugu katman: CLI, web, desktop (or: FastAPI routes / PySide6 / React)"
+    - name: "Core"
+      responsibility: "Ortak altyapi: event bus, state, logging, cache — tum domain katmanlarinin altyapisi"
+    - name: "Domain"
+      responsibility: "Is mantigi: or: order, payment, inventory modulleri"
+    - name: "Infrastructure"
+      responsibility: "Dis dunya: DB, cache, queue, filesystem, 3rd-party API"
+  dependency_chain: "UI -> Core -> Domain -> Infrastructure (AI proje gercegine gore duzeltir)"
+
+# Boot zinciri: entry point'ten ilk istek / ilk pencereye kadar gecilen adimlar.
+# scan tek basina bunu cikaramaz, AI kodu okuyarak yazar.
+boot_chain:
+  - step: "entry point"
+    file: main.py
+    note: "Arg parse + config yukleme + app factory cagrisi"
+  - step: "framework startup"
+    file: src/app.py
+    note: "Framework init (or: FastAPI create_app / QApplication + event loop)"
+  - step: "core init"
+    file: src/core/bootstrap.py
+    note: "Cascading init: config -> logging -> DB -> domain services (AI gercek adim sayisini yazar)"
+
+# Tum pub/sub event'ler veya domain event'ler. scan.py bulamaz; AI kodu okuyarak listeler.
+events:
+  - name: app_started
+  - name: user_created
+  - name: order_placed
+  - name: error_occurred
+  # ... AI projedeki tum event'leri ekler (Core/event_manager.py veya events.py oku)
+
+# Kullanimda olan tasarim desenleri. AI kodu okuyarak tespit eder.
+design_patterns:
+  - name: Factory
+    note: "Or: create_app() / create_service() factories"
+  - name: Singleton
+    note: "Or: ConfigManager, EventBus"
+  - name: "Pub/Sub (Observer)"
+    note: "Or: EventBus.emit/subscribe, thread-safe"
+  - name: Strategy
+    note: "Or: payment_strategy (credit_card vs paypal)"
+  - name: Adapter
+    note: "Or: 3rd-party API adapter"
+  # ... AI 5-15 desen ekler (Facade, Proxy, Circuit Breaker, Repository, Unit of Work...)
+
+# Ornek: istek / mesaj akisi (AI proje tipine gore uyarlar: HTTP request flow veya message flow)
+message_flow:
+  entry: "src/api/routes.py -> src/domain/service.py::handle_request()"
+  decision_layer: "validation -> auth -> rate_limit -> handler secimi"
+  fast_path: "cache hit -> direkt response"
+  slow_path: "validate -> business logic -> DB write -> event emit -> response"
+  cancel: "request timeout / user abort nasil ele aliniyor"
+
+# Ornek: veri / bellek akisi (AI proje tipine gore uyarlar: DB write/read veya cache flow)
+memory_flow:
+  storage: "Or: PostgreSQL (primary) + Redis (cache)"
+  write_path: "api -> service -> repository -> DB + cache invalidate + event"
+  query_path: "service -> repository -> DB/cache -> dto -> response"
+  memory_types:
+    - "Short-term: request cache"
+    - "Long-term: DB table"
+    - "Vector: (varsa) pgvector / chroma"
+    - "Transient: response context"
+
+# Ornek: oturum / lifecycle akisi (web session veya job lifecycle)
+session_flow:
+  lifecycle:
+    - "create_session() -> SessionManager (ID + metadata)"
+    - "context / unit-of-work yonetimi"
+    - "her istek / mesaj oturuma eklenir"
+    - "cleanup / expire + background job"
+
+# Yetenek haritasi: capability -> component (AI doldurur)
+capabilities:
+  - capability: "HTTP API (CRUD)"
+    component: api
+  - capability: "Background jobs"
+    component: worker
+  - capability: "Persistence (RDBMS + cache)"
+    component: infrastructure
+  - capability: "Auth & permissions"
+    component: core
+
+# Veri akis tipleri (AI doldurur)
+data_flow_types:
+  - type: "User request"
+    path: "UI -> API -> Domain"
+  - type: "DB write"
+    path: "Domain -> Infrastructure"
+  - type: "Event"
+    path: "Domain -> Core EventBus -> UI/Worker"
+
+# Baslangic ve kapanis zincirlerinin ozeti (detay boot_chain'de, burasi 4-7 maddelik ozet)
+startup_chain:
+  steps:
+    - "main.py (env / config fix)"
+    - "Core infra (logging, config, DB)"
+    - "Domain services -> Infrastructure"
+    - "UI / server shown; background tasks (non-blocking)"
+
+shutdown_chain:
+  steps:
+    - "Server / UI durduruldu"
+    - "Background jobs durduruldu"
+    - "DB / cache baglantilari kapatildi"
+    - "State final save, event bus closed"

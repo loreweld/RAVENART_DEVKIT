@@ -1,0 +1,37 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+*.egg
+
+# =========================
+# Yerel Kayıt (makineye özel proje yolları içerir)
+# repo içinde yalnızca registry.example.json şablonu bulunur
+# =========================
+registry.json
+registry.json.bak
+registry.json.lock
+
+# =========================
+# Çalışma Zamanı Çıktıları
+# DEVKIT hiçbir çıktıyı kendi klasörüne yazmaz; projelerin .devkit/ klasörlerine yazar.
+# =========================
+.devkit/
+*.log
+
+# =========================
+# IDE / OS
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+desktop.ini
