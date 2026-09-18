@@ -87,3 +87,7 @@ devkit/
 ## Lisans
 
 Bu proje özel/henüz lisanssızdır. Kullanım ve dağıtım koşulları için proje sahibiyle iletişime geçin.
+
+---
+
+© 2026 **İlker Can Karagülle** · [Loreweld AI](https://loreweld.ai) tarafından geliştirildi.
